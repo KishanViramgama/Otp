@@ -19,27 +19,28 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 
 @OptIn(ExperimentalLayoutApi::class)
 @ExperimentalMaterial3Api
 @Composable
-fun Otp() {
+fun Otp(otpSize: Int = 6, width: Dp = 45.dp) {
 
     FlowRow(
         modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
         horizontalArrangement = Arrangement.Center
     ) {
 
-        repeat(10){
+        repeat(otpSize) {
             var stringText by remember { mutableStateOf(TextFieldValue("")) }
             val mMaxLength = 1
             OutlinedTextField(
                 value = stringText,
-                onValueChange = {
-                    if (it.text.isDigitsOnly()) {
-                        if (it.text.length <= mMaxLength) stringText = it
+                onValueChange = { onValueChange ->
+                    if (onValueChange.text.isDigitsOnly()) {
+                        if (onValueChange.text.length <= mMaxLength) stringText = onValueChange
                     }
                 },
                 textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
@@ -48,7 +49,9 @@ fun Otp() {
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
                 ),
-                modifier = Modifier.padding(end = 10.dp).width(45.dp)
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .width(width)
             )
         }
     }
