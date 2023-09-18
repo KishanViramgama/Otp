@@ -1,18 +1,14 @@
 package com.example.library
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -26,7 +22,9 @@ import androidx.core.text.isDigitsOnly
 @OptIn(ExperimentalLayoutApi::class)
 @ExperimentalMaterial3Api
 @Composable
-fun Otp(otpSize: Int = 6, width: Dp = 45.dp) {
+fun MyOtp(otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp: String) -> Unit) {
+
+    var myOtp: String = ""
 
     FlowRow(
         modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
@@ -40,7 +38,10 @@ fun Otp(otpSize: Int = 6, width: Dp = 45.dp) {
                 value = stringText,
                 onValueChange = { onValueChange ->
                     if (onValueChange.text.isDigitsOnly()) {
-                        if (onValueChange.text.length <= mMaxLength) stringText = onValueChange
+                        if (onValueChange.text.length <= mMaxLength) {
+                            stringText = onValueChange
+                            myOtp = onValueChange.text.toString()
+                        }
                     }
                 },
                 textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
@@ -54,6 +55,7 @@ fun Otp(otpSize: Int = 6, width: Dp = 45.dp) {
                     .width(width)
             )
         }
+
     }
 
 }
