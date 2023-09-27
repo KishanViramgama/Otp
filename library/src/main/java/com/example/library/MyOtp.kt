@@ -1,5 +1,6 @@
 package com.example.library
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -24,7 +25,7 @@ import androidx.core.text.isDigitsOnly
 @OptIn(ExperimentalLayoutApi::class)
 @ExperimentalMaterial3Api
 @Composable
-fun MyOtp(otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp: String) -> Unit) {
+fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp: String) -> Unit) {
 
     var myOtp: String = ""
 
@@ -33,18 +34,18 @@ fun MyOtp(otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp: String) -> Unit)
         horizontalArrangement = Arrangement.Center
     ) {
 
+        val mMaxLength = 1
         val focusManager = LocalFocusManager.current
 
         repeat(otpSize) {
             var stringText by remember { mutableStateOf(TextFieldValue("")) }
-            val mMaxLength = 1
             OutlinedTextField(
                 value = stringText,
                 onValueChange = { onValueChange ->
                     if (onValueChange.text.isDigitsOnly()) {
                         if (onValueChange.text.length <= mMaxLength) {
                             stringText = onValueChange
-                            myOtp = onValueChange.text.toString()
+                            myOtp = onValueChange.text
                             focusManager.moveFocus(
                                 focusDirection = FocusDirection.Next,
                             )
