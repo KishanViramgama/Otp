@@ -11,8 +11,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -42,7 +44,11 @@ fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp
         val focusManager = LocalFocusManager.current
 
         repeat(otpSize) {
-            var stringText by remember { mutableStateOf(TextFieldValue("")) }
+            var stringText by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+                mutableStateOf(
+                    TextFieldValue("")
+                )
+            }
             OutlinedTextField(
                 value = stringText,
                 onValueChange = { onValueChange ->
@@ -55,6 +61,8 @@ fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp
                                     focusDirection = FocusDirection.Next,
                                 )
                             }
+                        }else{
+                            onSuccess.invoke("Success")
                         }
                     }
                 },
@@ -68,12 +76,12 @@ fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp
                     .padding(end = 10.dp)
                     .width(width)
                     .onKeyEvent { event ->
-                        if (0 < it) {
-                            if (event.key == Key.Backspace) {
+                        if (event.key == Key.Backspace) {
+                            if (0 < it) {
+                                stringText = TextFieldValue("")
                                 focusManager.moveFocus(
                                     focusDirection = FocusDirection.Previous,
                                 )
-
                             }
                         }
                         true
