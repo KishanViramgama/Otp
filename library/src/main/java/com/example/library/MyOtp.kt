@@ -13,6 +13,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,9 +50,11 @@ fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp
                         if (onValueChange.text.length <= mMaxLength) {
                             stringText = onValueChange
                             myOtp = onValueChange.text
-                            focusManager.moveFocus(
-                                focusDirection = FocusDirection.Next,
-                            )
+                            if (otpSize - 1 > it) {
+                                focusManager.moveFocus(
+                                    focusDirection = FocusDirection.Next,
+                                )
+                            }
                         }
                     }
                 },
@@ -61,6 +67,17 @@ fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp
                 modifier = Modifier
                     .padding(end = 10.dp)
                     .width(width)
+                    .onKeyEvent { event ->
+                        if (0 < it) {
+                            if (event.key == Key.Backspace) {
+                                focusManager.moveFocus(
+                                    focusDirection = FocusDirection.Previous,
+                                )
+
+                            }
+                        }
+                        true
+                    }
             )
         }
 
