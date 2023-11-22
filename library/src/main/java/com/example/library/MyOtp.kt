@@ -1,6 +1,7 @@
 package com.example.library
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -55,14 +56,15 @@ fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp
                     if (onValueChange.text.isDigitsOnly()) {
                         if (onValueChange.text.length <= mMaxLength) {
                             stringText = onValueChange
-                            myOtp = onValueChange.text
+                            myOtp + onValueChange.text
                             if (otpSize - 1 > it) {
                                 focusManager.moveFocus(
                                     focusDirection = FocusDirection.Next,
                                 )
                             }
-                        }else{
-                            onSuccess.invoke("Success")
+                        } else {
+                            Log.d("data_information", myOtp)
+                            onSuccess.invoke(myOtp)
                         }
                     }
                 },
@@ -78,6 +80,7 @@ fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp
                     .onKeyEvent { event ->
                         if (event.key == Key.Backspace) {
                             if (0 < it) {
+                                myOtp.dropLast(1)
                                 stringText = TextFieldValue("")
                                 focusManager.moveFocus(
                                     focusDirection = FocusDirection.Previous,
