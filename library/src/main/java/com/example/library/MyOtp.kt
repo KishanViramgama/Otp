@@ -86,8 +86,10 @@ fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp
                                     focusDirection = FocusDirection.Previous,
                                 )
                             }
+                            true
+                        } else {
+                            false
                         }
-                        true
                     }
             )
         }
