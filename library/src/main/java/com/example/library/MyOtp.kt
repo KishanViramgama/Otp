@@ -1,6 +1,5 @@
 package com.example.library
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -11,13 +10,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.runtime.*
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
@@ -27,17 +29,24 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.text.isDigitsOnly
 
 @OptIn(ExperimentalLayoutApi::class)
 @ExperimentalMaterial3Api
 @Composable
-fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp: String) -> Unit) {
+fun MyOtp(
+    modifier: Modifier = Modifier,
+    modifierOtp: Modifier = Modifier,
+    otpSize: Int = 6,
+    width: Dp = 45.dp,
+    keyboardType: KeyboardType = KeyboardType.Number,
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+    onSuccess: (otp: String) -> Unit
+) {
 
     var myOtp: String = ""
 
     FlowRow(
-        modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+        modifier = modifier,
         horizontalArrangement = Arrangement.Center
     ) {
 
@@ -53,29 +62,31 @@ fun MyOtp(content: Context, otpSize: Int = 6, width: Dp = 45.dp, onSuccess: (otp
             OutlinedTextField(
                 value = stringText,
                 onValueChange = { onValueChange ->
-                    if (onValueChange.text.isDigitsOnly()) {
-                        if (onValueChange.text.length <= mMaxLength) {
-                            stringText = onValueChange
-                            myOtp + onValueChange.text
-                            if (otpSize - 1 > it) {
+                    if (onValueChange.text.length <= mMaxLength) {
+                        stringText = onValueChange
+                        myOtp += onValueChange.text
+                        if (it < otpSize - 1) {
+                            if (onValueChange.text != "") {
                                 focusManager.moveFocus(
                                     focusDirection = FocusDirection.Next,
                                 )
                             }
-                        } else {
-                            Log.d("data_information", myOtp)
-                            onSuccess.invoke(myOtp)
                         }
                     }
                 },
                 textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
+                    keyboardType = keyboardType,
+                    imeAction = if (it < otpSize - 1) {
+                        ImeAction.Next
+                    } else {
+                        ImeAction.Done
+                    }
                 ),
-                modifier = Modifier
-                    .padding(end = 10.dp)
+                colors = colors,
+                modifier = modifierOtp
+                    .padding(start = 10.dp)
                     .width(width)
                     .onKeyEvent { event ->
                         if (event.key == Key.Backspace) {
