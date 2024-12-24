@@ -12,8 +12,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -42,7 +45,7 @@ fun MyOtp(
     onSuccess: (otp: String) -> Unit
 ) {
 
-    var myOtp: String = ""
+    val otpValues = remember { mutableStateListOf("", "", "", "", "", "") }
 
     FlowRow(
         modifier = modifier,
@@ -63,12 +66,16 @@ fun MyOtp(
                 onValueChange = { onValueChange ->
                     if (onValueChange.text.length <= mMaxLength) {
                         stringText = onValueChange
-                        myOtp += onValueChange.text
+                        otpValues[it] = onValueChange.text
                         if (it < otpSize - 1) {
                             if (onValueChange.text != "") {
                                 focusManager.moveFocus(
                                     focusDirection = FocusDirection.Next,
                                 )
+                            }
+                        } else {
+                            if (otpValues.size - 1 == it && otpValues.joinToString("").length == otpSize) {
+                                onSuccess.invoke(otpValues.joinToString(""))
                             }
                         }
                     }
@@ -90,7 +97,6 @@ fun MyOtp(
                     .onKeyEvent { event ->
                         if (event.key == Key.Backspace) {
                             if (0 < it) {
-                                myOtp.dropLast(1)
                                 stringText = TextFieldValue("")
                                 focusManager.moveFocus(
                                     focusDirection = FocusDirection.Previous,
@@ -104,6 +110,10 @@ fun MyOtp(
             )
         }
 
+    }
+
+    fun myOptValue(): String {
+        return otpValues.joinToString("")
     }
 
 }
