@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
