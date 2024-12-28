@@ -42,14 +42,17 @@ fun MyOtp(
     width: Dp = 45.dp,
     keyboardType: KeyboardType = KeyboardType.Number,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-    onSuccess: (otp: String) -> Unit
+    onSuccess: (otp: String) -> Unit = {}
 ) {
 
-    val otpValues = remember { mutableStateListOf("", "", "", "", "", "") }
+    // Create a dynamic list based on otpSize
+    val otpValues = remember { mutableStateListOf<String>() }
+    LaunchedEffect(otpSize) {
+        repeat(otpSize) { otpValues.add("") }
+    }
 
     FlowRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center
+        modifier = modifier, horizontalArrangement = Arrangement.Center
     ) {
 
         val mMaxLength = 1
@@ -61,8 +64,7 @@ fun MyOtp(
                     TextFieldValue("")
                 )
             }
-            OutlinedTextField(
-                value = stringText,
+            OutlinedTextField(value = stringText,
                 onValueChange = { onValueChange ->
                     if (onValueChange.text.length <= mMaxLength) {
                         stringText = onValueChange
@@ -83,8 +85,7 @@ fun MyOtp(
                 textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = keyboardType,
-                    imeAction = if (it < otpSize - 1) {
+                    keyboardType = keyboardType, imeAction = if (it < otpSize - 1) {
                         ImeAction.Next
                     } else {
                         ImeAction.Done
@@ -106,14 +107,17 @@ fun MyOtp(
                         } else {
                             false
                         }
-                    }
-            )
+                    })
         }
 
     }
 
     fun myOptValue(): String {
-        return otpValues.joinToString("")
+        return if (otpValues.joinToString("").length == otpSize) {
+            otpValues.joinToString("")
+        } else {
+            ""
+        }
     }
 
 }
