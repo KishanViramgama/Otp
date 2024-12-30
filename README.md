@@ -4,7 +4,7 @@ This library provides a set of composables for easily integrating One-Time Passw
 
 <b>Gradle</b>
 
-Add following dependency to your root project build.gradle file:
+Add following dependency to your settings.gradle.kts file:
 
 <pre>
 dependencyResolutionManagement {
@@ -14,7 +14,7 @@ dependencyResolutionManagement {
 }
 </pre>
 
-Add following dependency to your app module build.gradle file:
+Add following dependency to your app module build.gradle.kts file:
 
 <pre>
 dependencies {
