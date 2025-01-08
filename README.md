@@ -1,4 +1,4 @@
-# otp
+# Otp
 
 <img src="https://github.com/KishanViramgama/Otp/blob/master/demo.gif" height="368px" align="right" style="max-width:100%;"/>
 
