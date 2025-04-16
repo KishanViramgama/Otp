@@ -2,7 +2,6 @@ package com.example.otp
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
@@ -21,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.library.MyOtp
@@ -74,7 +74,6 @@ class MainActivity : ComponentActivity() {
                 )
             ) {
                 Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
-                Log.d("data_information", it)
             }
 
             Spacer(
@@ -91,12 +90,14 @@ class MainActivity : ComponentActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    Toast.makeText(this@MainActivity,
-                        getString(R.string.otpEmpty), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.otpEmpty), Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }) {
-                Text("Get OTP")
+                Text(stringResource(R.string.get_otp))
             }
         }
     }
