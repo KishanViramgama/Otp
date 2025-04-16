@@ -10,11 +10,14 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,7 +65,7 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MyOtp(
+            val getOtp = MyOtp(
                 otpSize = 4,
                 modifier = Modifier.padding(
                     start = 10.dp,
@@ -72,6 +75,28 @@ class MainActivity : ComponentActivity() {
             ) {
                 Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
                 Log.d("data_information", it)
+            }
+
+            Spacer(
+                modifier = Modifier.padding(
+                    bottom = 20.dp
+                )
+            )
+
+            Button(onClick = {
+                if (getOtp.isNotEmpty()) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "${getString(R.string.otp_found)} $getOtp",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toast.makeText(this@MainActivity,
+                        getString(R.string.otpEmpty), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }) {
+                Text("Get OTP")
             }
         }
     }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Otp</string>
+    <string name="otpEmpty">OTP not complete yet</string>
+    <string name="otp_found">User Submitted OTP:</string>
 </resources>

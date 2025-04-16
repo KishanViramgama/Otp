@@ -12,6 +12,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "Otp"
-include ':app'
-include ':library'
+include(":app")
+include(":library")

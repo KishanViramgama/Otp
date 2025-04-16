@@ -1,0 +1,686 @@
+Index: library/src/main/java/com/example/library/MyOtp.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.library\r\n\r\nimport androidx.compose.foundation.layout.Arrangement\r\nimport androidx.compose.foundation.layout.ExperimentalLayoutApi\r\nimport androidx.compose.foundation.layout.FlowRow\r\nimport androidx.compose.foundation.layout.padding\r\nimport androidx.compose.foundation.layout.width\r\nimport androidx.compose.foundation.text.KeyboardOptions\r\nimport androidx.compose.material3.ExperimentalMaterial3Api\r\nimport androidx.compose.material3.LocalTextStyle\r\nimport androidx.compose.material3.OutlinedTextField\r\nimport androidx.compose.material3.OutlinedTextFieldDefaults\r\nimport androidx.compose.material3.TextFieldColors\r\nimport androidx.compose.runtime.Composable\r\nimport androidx.compose.runtime.LaunchedEffect\r\nimport androidx.compose.runtime.getValue\r\nimport androidx.compose.runtime.mutableStateListOf\r\nimport androidx.compose.runtime.mutableStateOf\r\nimport androidx.compose.runtime.remember\r\nimport androidx.compose.runtime.saveable.rememberSaveable\r\nimport androidx.compose.runtime.setValue\r\nimport androidx.compose.ui.Modifier\r\nimport androidx.compose.ui.focus.FocusDirection\r\nimport androidx.compose.ui.input.key.Key\r\nimport androidx.compose.ui.input.key.key\r\nimport androidx.compose.ui.input.key.onKeyEvent\r\nimport androidx.compose.ui.platform.LocalFocusManager\r\nimport androidx.compose.ui.text.input.ImeAction\r\nimport androidx.compose.ui.text.input.KeyboardType\r\nimport androidx.compose.ui.text.input.TextFieldValue\r\nimport androidx.compose.ui.text.style.TextAlign\r\nimport androidx.compose.ui.unit.Dp\r\nimport androidx.compose.ui.unit.dp\r\n\r\n@OptIn(ExperimentalLayoutApi::class)\r\n@ExperimentalMaterial3Api\r\n@Composable\r\nfun MyOtp(\r\n    modifier: Modifier = Modifier,\r\n    modifierOtp: Modifier = Modifier,\r\n    otpSize: Int = 6,\r\n    width: Dp = 45.dp,\r\n    keyboardType: KeyboardType = KeyboardType.Number,\r\n    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),\r\n    onSuccess: (otp: String) -> Unit = {}\r\n) {\r\n\r\n    // Create a dynamic list based on otpSize\r\n    val otpValues = remember { mutableStateListOf<String>() }\r\n    LaunchedEffect(otpSize) {\r\n        repeat(otpSize) { otpValues.add(\"\") }\r\n    }\r\n\r\n    FlowRow(\r\n        modifier = modifier, horizontalArrangement = Arrangement.Center\r\n    ) {\r\n\r\n        val mMaxLength = 1\r\n        val focusManager = LocalFocusManager.current\r\n\r\n        repeat(otpSize) {\r\n            var stringText by rememberSaveable(stateSaver = TextFieldValue.Saver) {\r\n                mutableStateOf(\r\n                    TextFieldValue(\"\")\r\n                )\r\n            }\r\n            OutlinedTextField(value = stringText,\r\n                onValueChange = { onValueChange ->\r\n                    if (onValueChange.text.length <= mMaxLength) {\r\n                        stringText = onValueChange\r\n                        otpValues[it] = onValueChange.text\r\n                        if (it < otpSize - 1) {\r\n                            if (onValueChange.text != \"\") {\r\n                                focusManager.moveFocus(\r\n                                    focusDirection = FocusDirection.Next,\r\n                                )\r\n                            }\r\n                        } else {\r\n                            if (otpValues.size - 1 == it && otpValues.joinToString(\"\").length == otpSize) {\r\n                                onSuccess.invoke(otpValues.joinToString(\"\"))\r\n                            }\r\n                        }\r\n                    }\r\n                },\r\n                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),\r\n                singleLine = true,\r\n                keyboardOptions = KeyboardOptions(\r\n                    keyboardType = keyboardType, imeAction = if (it < otpSize - 1) {\r\n                        ImeAction.Next\r\n                    } else {\r\n                        ImeAction.Done\r\n                    }\r\n                ),\r\n                colors = colors,\r\n                modifier = modifierOtp\r\n                    .padding(start = 10.dp)\r\n                    .width(width)\r\n                    .onKeyEvent { event ->\r\n                        if (event.key == Key.Backspace) {\r\n                            if (0 < it) {\r\n                                stringText = TextFieldValue(\"\")\r\n                                focusManager.moveFocus(\r\n                                    focusDirection = FocusDirection.Previous,\r\n                                )\r\n                            }\r\n                            true\r\n                        } else {\r\n                            false\r\n                        }\r\n                    })\r\n        }\r\n\r\n    }\r\n\r\n    fun myOptValue(): String {\r\n        return if (otpValues.joinToString(\"\").length == otpSize) {\r\n            otpValues.joinToString(\"\")\r\n        } else {\r\n            \"\"\r\n        }\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/library/src/main/java/com/example/library/MyOtp.kt b/library/src/main/java/com/example/library/MyOtp.kt
+--- a/library/src/main/java/com/example/library/MyOtp.kt	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ b/library/src/main/java/com/example/library/MyOtp.kt	(date 1744820624887)
+@@ -43,7 +43,7 @@
+     keyboardType: KeyboardType = KeyboardType.Number,
+     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+     onSuccess: (otp: String) -> Unit = {}
+-) {
++): () -> String {
+ 
+     // Create a dynamic list based on otpSize
+     val otpValues = remember { mutableStateListOf<String>() }
+@@ -112,12 +112,10 @@
+ 
+     }
+ 
+-    fun myOptValue(): String {
+-        return if (otpValues.joinToString("").length == otpSize) {
+-            otpValues.joinToString("")
+-        } else {
+-            ""
+-        }
++    // External access function
++    return {
++        if (otpValues.all { it.isNotEmpty() }) otpValues.joinToString("")
++        else ""
+     }
+ 
+ }
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.application'\r\n    id 'org.jetbrains.kotlin.android'\r\n}\r\n\r\nandroid {\r\n    namespace 'com.example.otp'\r\n    compileSdk 34\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.otp\"\r\n        minSdk 21\r\n        targetSdk 34\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n        vectorDrawables {\r\n            useSupportLibrary true\r\n        }\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_17\r\n        targetCompatibility JavaVersion.VERSION_17\r\n    }\r\n    kotlinOptions {\r\n        jvmTarget = 17\r\n    }\r\n    buildFeatures {\r\n        compose true\r\n    }\r\n    composeOptions {\r\n        kotlinCompilerExtensionVersion '1.5.2'\r\n    }\r\n    packagingOptions {\r\n        resources {\r\n            excludes += '/META-INF/{AL2.0,LGPL2.1}'\r\n        }\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.core:core-ktx:1.12.0'\r\n    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'\r\n    implementation 'androidx.activity:activity-compose:1.7.2'\r\n    implementation \"androidx.compose.ui:ui:1.5.1\"\r\n    implementation \"androidx.compose.ui:ui-tooling-preview:1.5.1\"\r\n    implementation 'androidx.compose.material3:material3:1.2.0-alpha07'\r\n    testImplementation 'junit:junit:4.13.2'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.5'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'\r\n    androidTestImplementation \"androidx.compose.ui:ui-test-junit4:1.5.1\"\r\n    debugImplementation \"androidx.compose.ui:ui-tooling:1.5.1\"\r\n    debugImplementation \"androidx.compose.ui:ui-test-manifest:1.5.1\"\r\n    implementation project(path: ':library')\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ b/app/build.gradle	(date 1744456546574)
+@@ -1,16 +1,17 @@
+ plugins {
+-    id 'com.android.application'
+-    id 'org.jetbrains.kotlin.android'
++    alias(libs.plugins.android.application)
++    alias(libs.plugins.kotlin.android)
++    alias(libs.plugins.compose.compiler)
+ }
+ 
+ android {
+     namespace 'com.example.otp'
+-    compileSdk 34
++    compileSdk 35
+ 
+     defaultConfig {
+         applicationId "com.example.otp"
+-        minSdk 21
+-        targetSdk 34
++        minSdk 24
++        targetSdk 35
+         versionCode 1
+         versionName "1.0"
+ 
+@@ -27,17 +28,15 @@
+         }
+     }
+     compileOptions {
+-        sourceCompatibility JavaVersion.VERSION_17
+-        targetCompatibility JavaVersion.VERSION_17
++        sourceCompatibility JavaVersion.VERSION_21
++        targetCompatibility JavaVersion.VERSION_21
+     }
+     kotlinOptions {
+-        jvmTarget = 17
++        jvmTarget = "21"
+     }
+     buildFeatures {
+         compose true
+-    }
+-    composeOptions {
+-        kotlinCompilerExtensionVersion '1.5.2'
++        buildConfig = true
+     }
+     packagingOptions {
+         resources {
+@@ -46,19 +45,28 @@
+     }
+ }
+ 
++composeCompiler {
++    reportsDestination = layout.buildDirectory.dir("compose_compiler")
++}
++
+ dependencies {
+ 
+-    implementation 'androidx.core:core-ktx:1.12.0'
+-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
+-    implementation 'androidx.activity:activity-compose:1.7.2'
+-    implementation "androidx.compose.ui:ui:1.5.1"
+-    implementation "androidx.compose.ui:ui-tooling-preview:1.5.1"
+-    implementation 'androidx.compose.material3:material3:1.2.0-alpha07'
+-    testImplementation 'junit:junit:4.13.2'
+-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.5.1"
+-    debugImplementation "androidx.compose.ui:ui-tooling:1.5.1"
+-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.5.1"
+-    implementation project(path: ':library')
++    implementation libs.androidx.core.ktx
++    implementation libs.androidx.lifecycle.runtime.ktx
++    implementation libs.androidx.activity.compose
++    implementation libs.androidx.ui
++    implementation libs.androidx.ui.tooling.preview
++    implementation libs.androidx.material3
++
++    testImplementation libs.junit
++
++    androidTestImplementation libs.androidx.junit
++    androidTestImplementation libs.androidx.espresso.core
++    androidTestImplementation libs.androidx.ui.test.junit4
++
++    debugImplementation libs.androidx.ui.tooling
++    debugImplementation libs.androidx.ui.test.manifest
++
++    implementation(project(":library"))
++
+ }
+\ No newline at end of file
+Index: library/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.library'\r\n    id 'org.jetbrains.kotlin.android'\r\n}\r\n\r\nandroid {\r\n    namespace 'com.example.library'\r\n    compileSdk 34\r\n\r\n    defaultConfig {\r\n        minSdk 21\r\n        targetSdk 34\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n        consumerProguardFiles \"consumer-rules.pro\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_17\r\n        targetCompatibility JavaVersion.VERSION_17\r\n    }\r\n    kotlinOptions {\r\n        jvmTarget = 17\r\n    }\r\n    buildFeatures {\r\n        compose true\r\n    }\r\n    composeOptions {\r\n        kotlinCompilerExtensionVersion '1.5.2'\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.core:core-ktx:1.12.0'\r\n    implementation 'androidx.appcompat:appcompat:1.6.1'\r\n    implementation 'com.google.android.material:material:1.9.0'\r\n    implementation 'androidx.compose.material3:material3:1.2.0-alpha07'\r\n    implementation 'androidx.compose.ui:ui:1.5.1'\r\n    implementation 'androidx.compose.ui:ui-tooling-preview:1.5.1'\r\n    androidTestImplementation \"androidx.compose.ui:ui-test-junit4:1.5.1\"\r\n    debugImplementation \"androidx.compose.ui:ui-tooling:1.5.1\"\r\n    debugImplementation \"androidx.compose.ui:ui-test-manifest:1.5.1\"\r\n    testImplementation 'junit:junit:4.13.2'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.5'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/library/build.gradle b/library/build.gradle
+--- a/library/build.gradle	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ b/library/build.gradle	(date 1744456726953)
+@@ -1,18 +1,18 @@
+ plugins {
+     id 'com.android.library'
+     id 'org.jetbrains.kotlin.android'
++    alias(libs.plugins.compose.compiler)
+ }
+ 
+ android {
+     namespace 'com.example.library'
+-    compileSdk 34
++    compileSdk 35
+ 
+     defaultConfig {
+-        minSdk 21
+-        targetSdk 34
++        minSdk 24
++        targetSdk 35
+ 
+         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+-        consumerProguardFiles "consumer-rules.pro"
+     }
+ 
+     buildTypes {
+@@ -22,32 +22,35 @@
+         }
+     }
+     compileOptions {
+-        sourceCompatibility JavaVersion.VERSION_17
+-        targetCompatibility JavaVersion.VERSION_17
++        sourceCompatibility JavaVersion.VERSION_21
++        targetCompatibility JavaVersion.VERSION_21
+     }
+     kotlinOptions {
+-        jvmTarget = 17
++        jvmTarget = "21"
+     }
+     buildFeatures {
+         compose true
++        buildConfig = true
+     }
+-    composeOptions {
+-        kotlinCompilerExtensionVersion '1.5.2'
+-    }
++}
++
++composeCompiler {
++    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+ }
+ 
+ dependencies {
+ 
+-    implementation 'androidx.core:core-ktx:1.12.0'
+-    implementation 'androidx.appcompat:appcompat:1.6.1'
+-    implementation 'com.google.android.material:material:1.9.0'
+-    implementation 'androidx.compose.material3:material3:1.2.0-alpha07'
+-    implementation 'androidx.compose.ui:ui:1.5.1'
+-    implementation 'androidx.compose.ui:ui-tooling-preview:1.5.1'
+-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.5.1"
+-    debugImplementation "androidx.compose.ui:ui-tooling:1.5.1"
+-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.5.1"
+-    testImplementation 'junit:junit:4.13.2'
+-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
++    implementation libs.androidx.core.ktx
++    implementation libs.androidx.material3
++    implementation libs.androidx.ui
++    implementation libs.androidx.ui.tooling.preview
++
++    testImplementation libs.junit
++    androidTestImplementation libs.androidx.junit
++    androidTestImplementation libs.androidx.espresso.core
++    androidTestImplementation libs.androidx.ui.test.junit4
++
++    debugImplementation libs.androidx.ui.tooling
++    debugImplementation libs.androidx.ui.test.manifest
++
+ }
+\ No newline at end of file
+Index: settings.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>pluginManagement {\r\n    repositories {\r\n        gradlePluginPortal()\r\n        google()\r\n        mavenCentral()\r\n    }\r\n}\r\ndependencyResolutionManagement {\r\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\r\n    repositories {\r\n        google()\r\n        mavenCentral()\r\n    }\r\n}\r\nrootProject.name = \"Otp\"\r\ninclude ':app'\r\ninclude ':library'\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/settings.gradle b/settings.gradle
+--- a/settings.gradle	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ b/settings.gradle	(date 1744456290566)
+@@ -12,6 +12,7 @@
+         mavenCentral()
+     }
+ }
++
+ rootProject.name = "Otp"
+-include ':app'
+-include ':library'
++include(":app")
++include(":library")
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\">\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.Otp\"\r\n        tools:targetApi=\"31\">\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\"\r\n            android:label=\"@string/app_name\"\r\n            android:theme=\"@style/Theme.Otp\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ b/app/src/main/AndroidManifest.xml	(date 1744455667657)
+@@ -3,6 +3,7 @@
+     xmlns:tools="http://schemas.android.com/tools">
+ 
+     <application
++        android:name=".MyApplication"
+         android:allowBackup="true"
+         android:dataExtractionRules="@xml/data_extraction_rules"
+         android:fullBackupContent="@xml/backup_rules"
+@@ -19,10 +20,8 @@
+             android:theme="@style/Theme.Otp">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+-
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+-
+             <meta-data
+                 android:name="android.app.lib_name"
+                 android:value="" />
+Index: .idea/kotlinc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/kotlinc.xml b/.idea/kotlinc.xml
+deleted file mode 100644
+--- a/.idea/kotlinc.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="KotlinJpsPluginSettings">
+-    <option name="version" value="1.9.0" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/appInsightsSettings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/appInsightsSettings.xml b/.idea/appInsightsSettings.xml
+deleted file mode 100644
+--- a/.idea/appInsightsSettings.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,26 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="AppInsightsSettings">
+-    <option name="tabSettings">
+-      <map>
+-        <entry key="Firebase Crashlytics">
+-          <value>
+-            <InsightsFilterSettings>
+-              <option name="connection">
+-                <ConnectionSetting>
+-                  <option name="appId" value="PLACEHOLDER" />
+-                  <option name="mobileSdkAppId" value="" />
+-                  <option name="projectId" value="" />
+-                  <option name="projectNumber" value="" />
+-                </ConnectionSetting>
+-              </option>
+-              <option name="signal" value="SIGNAL_UNSPECIFIED" />
+-              <option name="timeIntervalDays" value="THIRTY_DAYS" />
+-              <option name="visibilityType" value="ALL" />
+-            </InsightsFilterSettings>
+-          </value>
+-        </entry>
+-      </map>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/deploymentTargetDropDown.xml
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+deleted file mode 100644
+--- a/.idea/deploymentTargetDropDown.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="deploymentTargetDropDown">
+-    <value>
+-      <entry key="app">
+-        <State />
+-      </entry>
+-    </value>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/.gitignore
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+deleted file mode 100644
+--- a/.idea/.gitignore	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,3 +0,0 @@
+-# Default ignored files
+-/shelf/
+-/workspace.xml
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+deleted file mode 100644
+--- a/.idea/vcs.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="VcsDirectoryMappings">
+-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+deleted file mode 100644
+--- a/.idea/gradle.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,21 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="GradleMigrationSettings" migrationVersion="1" />
+-  <component name="GradleSettings">
+-    <option name="linkedExternalProjectsSettings">
+-      <GradleProjectSettings>
+-        <option name="testRunner" value="CHOOSE_PER_TEST" />
+-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+-        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+-        <option name="modules">
+-          <set>
+-            <option value="$PROJECT_DIR$" />
+-            <option value="$PROJECT_DIR$/app" />
+-            <option value="$PROJECT_DIR$/library" />
+-          </set>
+-        </option>
+-        <option name="resolveExternalAnnotations" value="false" />
+-      </GradleProjectSettings>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/runConfigurations.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+deleted file mode 100644
+--- a/.idea/runConfigurations.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,17 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="RunConfigurationProducerService">
+-    <option name="ignoredProducers">
+-      <set>
+-        <option value="com.intellij.execution.junit.AbstractAllInDirectoryConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.AllInPackageConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.PatternConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.TestInClassConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.UniqueIdConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.testDiscovery.JUnitTestDiscoveryConfigurationProducer" />
+-        <option value="org.jetbrains.kotlin.idea.junit.KotlinJUnitRunConfigurationProducer" />
+-        <option value="org.jetbrains.kotlin.idea.junit.KotlinPatternConfigurationProducer" />
+-      </set>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+deleted file mode 100644
+--- a/.idea/deploymentTargetSelector.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="deploymentTargetSelector">
+-    <selectionStates>
+-      <SelectionState runConfigName="app">
+-        <option name="selectionMode" value="DROPDOWN" />
+-      </SelectionState>
+-    </selectionStates>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/inspectionProfiles/Project_Default.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/inspectionProfiles/Project_Default.xml b/.idea/inspectionProfiles/Project_Default.xml
+deleted file mode 100644
+--- a/.idea/inspectionProfiles/Project_Default.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,57 +0,0 @@
+-<component name="InspectionProjectProfileManager">
+-  <profile version="1.0">
+-    <option name="myName" value="Project Default" />
+-    <inspection_tool class="ComposePreviewDimensionRespectsLimit" enabled="true" level="WARNING" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="ComposePreviewMustBeTopLevelFunction" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="ComposePreviewNeedsComposableAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="ComposePreviewNotSupportedInUnitTestFiles" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="GlancePreviewDimensionRespectsLimit" enabled="true" level="WARNING" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="GlancePreviewMustBeTopLevelFunction" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="GlancePreviewNeedsComposableAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="GlancePreviewNotSupportedInUnitTestFiles" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewAnnotationInFunctionWithParameters" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewApiLevelMustBeValid" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewDeviceShouldUseNewSpec" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewFontScaleMustBeGreaterThanZero" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewMultipleParameterProviders" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-    <inspection_tool class="PreviewPickerAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
+-      <option name="composableFile" value="true" />
+-      <option name="previewFile" value="true" />
+-    </inspection_tool>
+-  </profile>
+-</component>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+deleted file mode 100644
+--- a/.idea/misc.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="ExternalStorageConfigurationManager" enabled="true" />
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK">
+-    <output url="file://$PROJECT_DIR$/build/classes" />
+-  </component>
+-  <component name="ProjectType">
+-    <option name="id" value="Android" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+deleted file mode 100644
+--- a/.idea/compiler.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="CompilerConfiguration">
+-    <bytecodeTargetLevel target="21" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/migrations.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/migrations.xml b/.idea/migrations.xml
+deleted file mode 100644
+--- a/.idea/migrations.xml	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ /dev/null	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="ProjectMigrations">
+-    <option name="MigrateToGradleLocalJavaHome">
+-      <set>
+-        <option value="$PROJECT_DIR$" />
+-      </set>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\nplugins {\r\n    id 'com.android.application' version '8.7.3' apply false\r\n    id 'com.android.library' version '8.7.3' apply false\r\n    id 'org.jetbrains.kotlin.android' version '1.9.0' apply false\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ b/build.gradle	(date 1744450146340)
+@@ -1,6 +1,7 @@
+ // Top-level build file where you can add configuration options common to all sub-projects/modules.
+ plugins {
+-    id 'com.android.application' version '8.7.3' apply false
+-    id 'com.android.library' version '8.7.3' apply false
+-    id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
++    alias(libs.plugins.android.application) apply false
++    alias(libs.plugins.android.library) apply false
++    alias(libs.plugins.kotlin.android) apply false
++    alias(libs.plugins.compose.compiler) apply false
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/otp/MyApplication.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/otp/MyApplication.kt b/app/src/main/java/com/example/otp/MyApplication.kt
+new file mode 100644
+--- /dev/null	(date 1744455667648)
++++ b/app/src/main/java/com/example/otp/MyApplication.kt	(date 1744455667648)
+@@ -0,0 +1,10 @@
++package com.example.otp
++
++import android.app.Application
++
++class MyApplication :Application() {
++
++    override fun onCreate() {
++        super.onCreate()
++    }
++}
+\ No newline at end of file
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Sat Nov 26 21:46:10 IST 2022\r\ndistributionBase=GRADLE_USER_HOME\r\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.9-bin.zip\r\ndistributionPath=wrapper/dists\r\nzipStorePath=wrapper/dists\r\nzipStoreBase=GRADLE_USER_HOME\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+--- a/gradle/wrapper/gradle-wrapper.properties	(revision 597058b67579cd2161c963c19e9e20250ebd5075)
++++ b/gradle/wrapper/gradle-wrapper.properties	(date 1741623117923)
+@@ -1,6 +1,6 @@
+ #Sat Nov 26 21:46:10 IST 2022
+ distributionBase=GRADLE_USER_HOME
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.9-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-bin.zip
+ distributionPath=wrapper/dists
+ zipStorePath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+Index: gradle/libs.versions.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml
+new file mode 100644
+--- /dev/null	(date 1744451083077)
++++ b/gradle/libs.versions.toml	(date 1744451083077)
+@@ -0,0 +1,35 @@
++[versions]
++
++activityCompose = "1.10.1"
++agp = "8.9.1"
++coreKtx = "1.16.0"
++espressoCore = "3.6.1"
++junit = "4.13.2"
++junitVersion = "1.2.1"
++kotlin = "2.1.20"
++lifecycleRuntimeKtx = "2.8.7"
++material3 = "1.3.2"
++ui = "1.7.8"
++uiToolingPreview = "1.7.8"
++
++[libraries]
++androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
++androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
++androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
++androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
++androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
++androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
++androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "ui" }
++androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "ui" }
++androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "ui" }
++androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
++androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
++junit = { module = "junit:junit", version.ref = "junit" }
++
++
++[plugins]
++
++android-application = { id = "com.android.application", version.ref = "agp" }
++android-library = { id = "com.android.library", version.ref = "agp" }
++kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
++compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+\ No newline at end of file

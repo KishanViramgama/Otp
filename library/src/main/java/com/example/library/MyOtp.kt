@@ -1,5 +1,6 @@
 package com.example.library
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -43,7 +44,10 @@ fun MyOtp(
     keyboardType: KeyboardType = KeyboardType.Number,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
     onSuccess: (otp: String) -> Unit = {}
-) {
+): String {
+
+    val mMaxLength = 1
+    val focusManager = LocalFocusManager.current
 
     // Create a dynamic list based on otpSize
     val otpValues = remember { mutableStateListOf<String>() }
@@ -55,25 +59,27 @@ fun MyOtp(
         modifier = modifier, horizontalArrangement = Arrangement.Center
     ) {
 
-        val mMaxLength = 1
-        val focusManager = LocalFocusManager.current
-
         repeat(otpSize) {
             var stringText by rememberSaveable(stateSaver = TextFieldValue.Saver) {
                 mutableStateOf(
                     TextFieldValue("")
                 )
             }
-            OutlinedTextField(value = stringText,
+            OutlinedTextField(
+                value = stringText,
                 onValueChange = { onValueChange ->
                     if (onValueChange.text.length <= mMaxLength) {
                         stringText = onValueChange
                         otpValues[it] = onValueChange.text
                         if (it < otpSize - 1) {
                             if (onValueChange.text != "") {
-                                focusManager.moveFocus(
-                                    focusDirection = FocusDirection.Next,
-                                )
+                                try {
+                                    focusManager.moveFocus(
+                                        focusDirection = FocusDirection.Next,
+                                    )
+                                } catch (e: Exception) {
+                                   Log.d("data_information", e.message.toString())
+                                }
                             }
                         } else {
                             if (otpValues.size - 1 == it && otpValues.joinToString("").length == otpSize) {
@@ -99,9 +105,13 @@ fun MyOtp(
                         if (event.key == Key.Backspace) {
                             if (0 < it) {
                                 stringText = TextFieldValue("")
-                                focusManager.moveFocus(
-                                    focusDirection = FocusDirection.Previous,
-                                )
+                                try {
+                                    focusManager.moveFocus(
+                                        focusDirection = FocusDirection.Previous,
+                                    )
+                                } catch (e: Exception) {
+                                    Log.d("data_information", e.message.toString())
+                                }
                             }
                             true
                         } else {
@@ -112,12 +122,11 @@ fun MyOtp(
 
     }
 
-    fun myOptValue(): String {
-        return if (otpValues.joinToString("").length == otpSize) {
-            otpValues.joinToString("")
-        } else {
-            ""
-        }
+    // External access function
+    return if (otpValues.joinToString("").length == otpSize) {
+        otpValues.joinToString("")
+    } else {
+        ""
     }
 
 }
