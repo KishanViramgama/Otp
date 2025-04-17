@@ -116,6 +116,8 @@ Button(onClick = {
   <li>⚠️ If OTP is incomplete, it will return an <code>empty</code> string</li>
 </ul>
 
+---
+**Tags**: `Jetpack Compose`, `OTP`, `Android`, `Kotlin`, `Authentication`, `UI`, `Compose UI`, `Material Design`
 
 
 <h2>🤝 Contribution</h2>
