@@ -1,16 +1,19 @@
 package com.example.library
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+@SuppressLint("RememberSaveableSaverParameter")
 @OptIn(ExperimentalLayoutApi::class)
 @ExperimentalMaterial3Api
 @Composable
@@ -40,7 +44,8 @@ fun MyOtp(
     modifier: Modifier = Modifier,
     modifierOtp: Modifier = Modifier,
     otpSize: Int = 6,
-    width: Dp = 45.dp,
+    shapes: Int = 50,
+    width: Dp = 60.dp,
     keyboardType: KeyboardType = KeyboardType.Number,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
     onSuccess: (otp: String) -> Unit = {}
@@ -88,6 +93,7 @@ fun MyOtp(
                         }
                     }
                 },
+                shape = RoundedCornerShape(shapes),
                 textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(

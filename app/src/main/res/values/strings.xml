@@ -2,5 +2,7 @@
     <string name="app_name">Otp</string>
     <string name="otpEmpty">OTP not complete yet</string>
     <string name="otp_found">User Submitted OTP:</string>
-    <string name="get_otp">Get OTP</string>
+    <string name="verify">Verify</string>
+    <string name="enter_your_otp">Enter Your OTP</string>
+    <string name="des_otp">Please enter the OTP code sent to your mobile number +91 1234xxxxxx.</string>
 </resources>
