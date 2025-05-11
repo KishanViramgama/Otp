@@ -130,6 +130,12 @@ Button(onClick = {
 
 <p>This project is <a href="LICENSE">MIT Licensed</a></p>
 
+## ☕ Support
+
+If you like this library and want to support my work, consider buying me a coffee.
+
 <p align="center">
-  <i>Built with ❤️ by <a href="https://github.com/KishanViramgama" target="_blank">Kishan Viramgama</a></i>
+  <a href="https://paypal.me/KishanViramgama?country.x=IN&locale.x=en_GB" target="_blank">
+    <img src="https://img.shields.io/badge/☕-Buy%20Me%20a%20Coffee-orange?style=for-the-badge" />
+  </a>
 </p>
