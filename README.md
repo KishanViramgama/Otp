@@ -128,7 +128,7 @@ Button(onClick = {
 
 <h2>🪪 License</h2>
 
-<p>This project is <a href="LICENSE">MIT Licensed</a></p>
+This project is [MIT Licensed](https://github.com/KishanViramgama/Otp/blob/master/LICENSE).
 
 ## ☕ Support
 
